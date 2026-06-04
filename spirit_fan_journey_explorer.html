@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Washington Spirit — Fan Journey Explorer</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sr:#C8102E;--sn:#1A2B4A;
+  --sg-bg:#EAF3DE;--sg-tx:#3B6D11;--sg-bd:#639922;
+  --sw-bg:#FAEEDA;--sw-tx:#854F0B;--sw-bd:#BA7517;
+  --sd-bg:#E6F1FB;--sd-tx:#0C447C;--sd-bd:#185FA5;
+  --ch-bg:#EAF3DE;--ch-tx:#3B6D11;--ch-bd:#639922;
+  --ca-bg:#E6F1FB;--ca-tx:#0C447C;--ca-bd:#185FA5;
+  --cf-bg:#FAEEDA;--cf-tx:#854F0B;--cf-bd:#BA7517;
+  --cu-bg:#F1EFE8;--cu-tx:#5F5E5A;--cu-bd:#B4B2A9;
+  --bg:#ffffff;--bg2:#f8f7f4;--bg3:#f1efea;
+  --tx:#1a1a18;--tx2:#6b6a63;--tx3:#9b9a93;
+  --bd:#e8e6df;--bd2:#d3d1c7;
+  --radius-md:8px;--radius-lg:12px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1c1c1a;--bg2:#242422;--bg3:#2c2c2a;
+    --tx:#e8e6df;--tx2:#9b9a93;--tx3:#6b6a63;
+    --bd:#3a3a36;--bd2:#4a4a46;
+  }
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--tx);font-size:14px;min-height:100vh}
+.wrap{max-width:900px;margin:0 auto;padding:0 1.5rem 3rem}
+
+.hdr{padding:1.5rem 0 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:0}
+.hdr-l{display:flex;align-items:center;gap:12px}
+.crest{width:40px;height:40px;background:var(--sr);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.crest svg{width:22px;height:22px}
+.htitle{font-size:17px;font-weight:600;color:var(--tx)}
+.hsub{font-size:12px;color:var(--tx2);margin-top:1px}
+.disc{font-size:11px;font-style:italic;color:var(--tx3);background:var(--bg2);border:0.5px solid var(--bd);border-radius:var(--radius-md);padding:5px 11px}
+
+.nav{display:flex;border-bottom:1.5px solid var(--bd);margin-top:1.25rem}
+.tab{padding:11px 20px;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;border:none;border-bottom:2px solid transparent;background:none;margin-bottom:-1.5px;transition:color .15s}
+.tab:hover{color:var(--tx)}
+.tab.on{color:var(--sr);border-bottom-color:var(--sr)}
+
+.pg{display:none;padding-top:1.5rem}
+.pg.on{display:block}
+
+/* Journey map */
+.rail{display:flex;align-items:flex-start;gap:0;margin-bottom:.75rem;overflow-x:auto;padding-bottom:4px}
+.snode{flex:1;min-width:108px;cursor:pointer;padding:13px 8px;border:1px solid var(--bd);border-radius:var(--radius-md);text-align:center;background:var(--bg);transition:all .15s}
+.snode:hover{border-color:var(--sr);background:var(--bg2)}
+.snode.on{border-color:var(--sr);border-width:1.5px;background:var(--bg2)}
+.sicon{font-size:19px;margin-bottom:5px;color:var(--tx2)}
+.snode.on .sicon{color:var(--sr)}
+.sname{font-size:12px;font-weight:600;color:var(--tx)}
+.sdesc{font-size:10px;color:var(--tx2);margin-top:2px;line-height:1.3}
+.sarr{color:var(--tx3);font-size:18px;padding:0 3px;flex-shrink:0;align-self:center}
+.sarr.w{color:var(--sw-bd)}
+.warr-wrap{display:flex;flex-direction:column;align-items:center;flex-shrink:0;align-self:center}
+.warr-lbl{font-size:9px;color:var(--sw-tx);white-space:nowrap;margin-top:1px}
+
+.dpanel{background:var(--bg2);border:0.5px solid var(--bd);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.25rem;min-height:110px}
+.dgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+@media(max-width:600px){.dgrid{grid-template-columns:1fr}}
+.dlbl{font-size:10px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.dval{font-size:13px;color:var(--tx);line-height:1.55}
+.mpill{display:inline-flex;align-items:center;gap:5px;background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--radius-md);padding:5px 11px;font-size:12px;font-weight:500;color:var(--tx2)}
+
+.sec-label{font-size:12px;font-weight:600;color:var(--tx2);margin-bottom:8px}
+.hrow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+@media(max-width:580px){.hrow{grid-template-columns:repeat(3,1fr)}}
+.hcard{padding:10px;border-radius:var(--radius-md);background:var(--bg2);border:0.5px solid var(--bd);text-align:center}
+.hstage{font-size:10px;color:var(--tx2);margin-bottom:4px}
+.hbadge{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:9999px;margin-bottom:4px}
+.bs{background:var(--sg-bg);color:var(--sg-tx)}
+.bw{background:var(--sw-bg);color:var(--sw-tx)}
+.bd-cls{background:var(--sd-bg);color:var(--sd-tx)}
+.hnote{font-size:10px;color:var(--tx3);line-height:1.3;margin-bottom:4px}
+.hsrc{font-size:9px;color:var(--tx3);font-style:italic;border-top:0.5px solid var(--bd);padding-top:3px;margin-top:2px;line-height:1.3}
+.hfn{font-size:11px;font-style:italic;color:var(--tx3);text-align:center;margin-top:.6rem}
+
+/* Matrix */
+.fbar{display:flex;align-items:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.flbl{font-size:13px;color:var(--tx2)}
+.fbtn{font-size:12px;padding:5px 13px;border:0.5px solid var(--bd2);border-radius:9999px;cursor:pointer;background:none;color:var(--tx2);transition:all .15s}
+.fbtn:hover{background:var(--bg2)}
+.fbtn.on{background:var(--sn);border-color:var(--sn);color:#fff}
+@media(prefers-color-scheme:dark){.fbtn.on{background:var(--sd-bg);border-color:var(--sd-bd);color:var(--sd-tx)}}
+.mleg{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:.75rem}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx2)}
+.ld{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.mwrap{overflow-x:auto;margin-bottom:1rem}
+.mtbl{width:100%;border-collapse:collapse;min-width:580px}
+.mtbl th{font-size:11px;font-weight:600;color:var(--tx2);padding:8px 10px;text-align:center;border-bottom:1.5px solid var(--bd)}
+.mtbl th.sh{text-align:left;min-width:140px}
+.srow{cursor:pointer}
+.srow:hover td{background:var(--bg2)}
+.srow.ex td{background:var(--bg2)}
+.stdc{padding:10px;border-bottom:0.5px solid var(--bd)}
+.snin{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:var(--tx)}
+.schev{font-size:11px;color:var(--tx3);margin-left:auto;transition:transform .2s;display:inline-block}
+.srow.ex .schev{transform:rotate(90deg)}
+.mtd{padding:8px 10px;text-align:center;border-bottom:0.5px solid var(--bd);vertical-align:middle}
+.cp{display:inline-block;font-size:10px;font-weight:600;padding:3px 9px;border-radius:9999px}
+.ph{background:var(--ch-bg);color:var(--ch-tx);border:0.5px solid var(--ch-bd)}
+.pa{background:var(--ca-bg);color:var(--ca-tx);border:0.5px solid var(--ca-bd)}
+.pf{background:var(--cf-bg);color:var(--cf-tx);border:0.5px solid var(--cf-bd)}
+.pu{background:var(--cu-bg);color:var(--cu-tx);border:0.5px solid var(--cu-bd)}
+.sprof{background:var(--bg);border:0.5px solid var(--bd2);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:4px}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:500px){.pgrid{grid-template-columns:1fr}}
+.plbl{font-size:10px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.pval{font-size:13px;color:var(--tx);line-height:1.55}
+.ltag{display:inline-flex;align-items:center;gap:5px;background:#fff5f6;border:0.5px solid var(--sr);border-radius:var(--radius-md);padding:4px 11px;font-size:12px;color:var(--sr);font-weight:600}
+@media(prefers-color-scheme:dark){.ltag{background:#2a1518;color:#f08090}}
+.dsig{background:var(--bg2);border-left:2px solid var(--bd2);border-radius:0 var(--radius-md) var(--radius-md) 0;padding:9px 12px;font-size:12px;color:var(--tx2);line-height:1.55}
+
+/* Tooltip */
+.tipbox{background:var(--bg);border:0.5px solid var(--bd2);border-radius:var(--radius-md);padding:9px 13px;font-size:12px;line-height:1.45;max-width:280px;color:var(--tx);margin-top:6px;display:none}
+
+/* Scenarios */
+.sbanner{font-size:12px;font-style:italic;color:var(--tx3);margin-bottom:1.25rem;padding:9px 13px;background:var(--bg2);border-radius:var(--radius-md);border:0.5px solid var(--bd);line-height:1.5}
+.scards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem}
+@media(max-width:640px){.scards{grid-template-columns:repeat(2,1fr)}}
+.scc{padding:13px;border:1px solid var(--bd);border-radius:var(--radius-lg);cursor:pointer;background:var(--bg);transition:all .15s}
+.scc:hover{border-color:var(--sr)}
+.scc.on{border-color:var(--sr);border-width:1.5px;background:var(--bg2)}
+.scc.fut{opacity:.5;cursor:default;border-style:dashed}
+.scc.fut:hover{border-color:var(--bd)}
+.scnum{font-size:10px;font-weight:600;color:var(--sr);margin-bottom:3px}
+.sctitle{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:5px}
+.scq{font-size:11px;color:var(--tx2);line-height:1.45}
+.fut-badge{display:inline-block;font-size:9px;background:var(--bg2);border:0.5px solid var(--bd);border-radius:9999px;padding:2px 8px;color:var(--tx3);margin-top:5px}
+.seq-badge{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:600;padding:2px 8px;border-radius:9999px;margin-bottom:7px}
+.seq-1{background:var(--sg-bg);color:var(--sg-tx);border:0.5px solid var(--sg-bd)}
+.seq-2{background:var(--sd-bg);color:var(--sd-tx);border:0.5px solid var(--sd-bd)}
+.seq-3{background:var(--cu-bg);color:var(--cu-tx);border:0.5px solid var(--cu-bd)}
+.seq-rat{font-size:10px;color:var(--tx3);margin-top:7px;padding-top:7px;border-top:0.5px solid var(--bd);line-height:1.4}
+
+.egrid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+@media(max-width:560px){.egrid{grid-template-columns:1fr}}
+.spanel{background:var(--bg2);border:0.5px solid var(--bd);border-radius:var(--radius-lg);padding:1.25rem}
+.stitle{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:1rem}
+.slrow{margin-bottom:1rem}
+.sllr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.slname{font-size:12px;color:var(--tx2)}
+.slval{font-size:13px;font-weight:600;color:var(--tx);min-width:46px;text-align:right}
+input[type=range]{width:100%;accent-color:var(--sr)}
+.opanel{display:flex;flex-direction:column;gap:10px}
+.ocard{background:var(--bg2);border:0.5px solid var(--bd);border-radius:var(--radius-md);padding:15px}
+.olbl{font-size:11px;color:var(--tx2);margin-bottom:3px}
+.oval{font-size:24px;font-weight:600;color:var(--tx)}
+.onote{font-size:10px;font-style:italic;color:var(--tx3);margin-top:2px}
+.odef{font-size:10px;color:var(--tx3);font-style:italic;margin-top:4px;line-height:1.4}
+.icard{background:var(--bg);border:0.5px solid var(--bd2);border-radius:var(--radius-md);padding:15px}
+.ilbl{font-size:10px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.itxt{font-size:13px;color:var(--tx);line-height:1.55}
+.anote{border-left:3px solid var(--sr);border-radius:0 var(--radius-md) var(--radius-md) 0;padding:13px 15px;margin-top:1.25rem;background:var(--bg2)}
+.albl{font-size:10px;font-weight:600;color:var(--sr);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.atxt{font-size:12px;color:var(--tx2);line-height:1.55}
+
+.footer{margin-top:2.5rem;padding-top:1rem;border-top:0.5px solid var(--bd);font-size:11px;color:var(--tx3);text-align:center;font-style:italic}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hdr">
+  <div class="hdr-l">
+    <div class="crest"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" fill="white" opacity=".25"/><path d="M10 3L11.5 8h5l-4 3 1.5 5L10 13l-4 3 1.5-5-4-3h5z" fill="white"/></svg></div>
+    <div>
+      <div class="htitle">Fan Journey Explorer</div>
+      <div class="hsub">Washington Spirit · Strategic Decision-Support Prototype</div>
+    </div>
+  </div>
+  <div class="disc">Illustrative framework · Not actual Spirit data</div>
+</div>
+
+<nav class="nav">
+  <button class="tab on" onclick="showPg('journey',this)">Journey map</button>
+  <button class="tab" onclick="showPg('matrix',this)">Segment matrix</button>
+  <button class="tab" onclick="showPg('scenario',this)">Scenario explorer</button>
+</nav>
+
+<!-- PAGE 1: Journey Map -->
+<div id="pg-journey" class="pg on">
+  <div class="rail">
+    <div class="snode on" id="sn-awareness" onclick="selStage('awareness',this)">
+      <div class="sicon"><i class="ti ti-sparkles"></i></div>
+      <div class="sname">Awareness</div><div class="sdesc">First touchpoint</div>
+    </div>
+    <div class="sarr">›</div>
+    <div class="snode" id="sn-first" onclick="selStage('first',this)">
+      <div class="sicon"><i class="ti ti-ticket"></i></div>
+      <div class="sname">First match</div><div class="sdesc">Stadium debut</div>
+    </div>
+    <div class="warr-wrap"><span class="sarr w">›</span><span class="warr-lbl">Highest attrition</span></div>
+    <div class="snode" id="sn-repeat" onclick="selStage('repeat',this)">
+      <div class="sicon"><i class="ti ti-calendar-repeat"></i></div>
+      <div class="sname">Repeat attendance</div><div class="sdesc">Building habit</div>
+    </div>
+    <div class="sarr">›</div>
+    <div class="snode" id="sn-member" onclick="selStage('member',this)">
+      <div class="sicon"><i class="ti ti-id-badge"></i></div>
+      <div class="sname">Membership</div><div class="sdesc">Season commitment</div>
+    </div>
+    <div class="sarr">›</div>
+    <div class="snode" id="sn-advocacy" onclick="selStage('advocacy',this)">
+      <div class="sicon"><i class="ti ti-speakerphone"></i></div>
+      <div class="sname">Advocacy</div><div class="sdesc">Fan as ambassador</div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:var(--tx3);margin-bottom:1rem;font-style:italic">Click any stage to explore the strategic question and DMV angle</div>
+  <div class="dpanel" id="dpanel"></div>
+  <div class="sec-label">Stage health</div>
+  <div class="hrow">
+    <div class="hcard"><div class="hstage">Awareness</div><div class="hbadge bd-cls">Developing</div><div class="hnote">Transplant segment underleveraged</div><div class="hsrc">Basis: DMV transplant inflow (U.S. Census); NWSL awareness benchmarks</div></div>
+    <div class="hcard"><div class="hstage">First match</div><div class="hbadge bs">Strong</div><div class="hnote">Attendance growth signals effective conversion</div><div class="hsrc">Basis: Reported Spirit 2024 attendance growth; NWSL expansion momentum</div></div>
+    <div class="hcard"><div class="hstage">Repeat attendance</div><div class="hbadge bw">Watch</div><div class="hnote">Highest-leverage retention opportunity</div><div class="hsrc">Basis: Typical first-timer return rates in pro sports (30–40% industry range); Spirit-specific validation needed</div></div>
+    <div class="hcard"><div class="hstage">Membership</div><div class="hbadge bs">Strong</div><div class="hnote">Season ticket growth shows healthy pipeline</div><div class="hsrc">Basis: Reported Spirit season ticket growth; NWSL membership trends 2023–24</div></div>
+    <div class="hcard"><div class="hstage">Advocacy</div><div class="hbadge bd-cls">Developing</div><div class="hnote">Youth partnerships emerging but underdeveloped</div><div class="hsrc">Basis: NWSL community program benchmarks; Spirit grassroots activity reporting</div></div>
+  </div>
+  <div class="hfn">Illustrative assessments — ratings reflect public information and industry benchmarks, not internal Spirit data</div>
+</div>
+
+<!-- PAGE 2: Segment Matrix -->
+<div id="pg-matrix" class="pg">
+  <div class="fbar">
+    <span class="flbl">Highlight by:</span>
+    <button class="fbtn on" onclick="setFilt('all',this)">All</button>
+    <button class="fbtn" onclick="setFilt('growth',this)">Growth potential</button>
+    <button class="fbtn" onclick="setFilt('retention',this)">Retention risk</button>
+    <button class="fbtn" onclick="setFilt('digital',this)">Digital engagement</button>
+  </div>
+  <div class="mleg">
+    <div class="li"><div class="ld" style="background:var(--ch-bd)"></div>High potential</div>
+    <div class="li"><div class="ld" style="background:var(--ca-bd)"></div>Active opportunity</div>
+    <div class="li"><div class="ld" style="background:var(--cf-bd)"></div>Friction point</div>
+    <div class="li"><div class="ld" style="background:var(--cu-bd)"></div>Underexplored</div>
+  </div>
+  <div class="mwrap">
+    <table class="mtbl">
+      <thead><tr>
+        <th class="sh">Segment</th>
+        <th>Awareness</th><th>First match</th><th>Repeat attendance</th><th>Membership</th><th>Advocacy</th>
+      </tr></thead>
+      <tbody id="mbody"></tbody>
+    </table>
+  </div>
+  <div id="tipbox" class="tipbox"></div>
+</div>
+
+<!-- PAGE 3: Scenario Explorer -->
+<div id="pg-scenario" class="pg">
+  <div class="sbanner">These scenarios represent competing priorities for the same finite budget and staff time. The recommended sequencing below reflects which investment builds the most durable analytical foundation. All figures are illustrative.</div>
+  <div class="scards" id="scards"></div>
+  <div class="egrid">
+    <div class="spanel" id="spanel"></div>
+    <div class="opanel" id="opanel"></div>
+  </div>
+  <div class="anote" id="anote"></div>
+</div>
+
+<div class="footer">Illustrative prototype · Meggie Heffernan, MBA Candidate · American University Kogod School of Business · Not actual Washington Spirit data</div>
+
+</div><!-- /wrap -->
+
+<script>
+var stageData={
+  awareness:{q:"Which channels and community touchpoints are generating first-time attendees — and which audiences are we not yet reaching?",dmv:"High transplant inflow creates a continuous acquisition stream. The question is whether outreach intercepts them before competing loyalties form.",metric:"Reach by channel · % first-timers by acquisition source"},
+  first:{q:"What is the in-stadium experience quality for first-timers, and which factors predict a return visit?",dmv:"The DC market competes for entertainment spend against established franchises. First impressions matter more here than in smaller markets.",metric:"First-timer NPS · Intent-to-return score"},
+  repeat:{q:"Which first-timers are on a path to membership vs. quietly drifting away?",dmv:"Transplants rebuilding social routines may respond to group re-engagement offers. The match serves a social function, not just a sports one.",metric:"30/60/90-day return rate · Frequency distribution"},
+  member:{q:"What is the lifetime value difference between a season ticket holder and a casual repeat attendee — and what drives conversion?",dmv:"Relocated fans represent a churn risk at this stage without an alternative digital membership or ambassador tier.",metric:"Repeat → member conversion rate · Retention rate YoY"},
+  advocacy:{q:"Which fans are amplifying the Spirit brand — online, in communities, to youth soccer households? How do we support and measure that?",dmv:"Youth soccer relationships at advocacy stage create a self-reinforcing pipeline: community → awareness → first match.",metric:"Referral rate · Youth partnership touchpoints"}
+};
+var stageNames={awareness:"Awareness",first:"First match",repeat:"Repeat attendance",member:"Membership",advocacy:"Advocacy"};
+
+function selStage(id,el){
+  document.querySelectorAll('.snode').forEach(function(n){n.classList.remove('on');});
+  el.classList.add('on');
+  var d=stageData[id];
+  document.getElementById('dpanel').innerHTML='<div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:1rem">'+stageNames[id]+'</div><div class="dgrid"><div><div class="dlbl">Strategic question</div><div class="dval">'+d.q+'</div></div><div><div class="dlbl">DMV angle</div><div class="dval">'+d.dmv+'</div></div><div><div class="dlbl">What to measure</div><div class="dval"><span class="mpill"><i class="ti ti-chart-bar" style="font-size:12px"></i>'+d.metric+'</span></div></div></div>';
+}
+selStage('awareness',document.getElementById('sn-awareness'));
+
+function showPg(id,btn){
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
+  document.getElementById('pg-'+id).classList.add('on');
+  btn.classList.add('on');
+}
+
+var mdata=[
+  {name:"Youth soccer households",icon:"ti-ball-football",
+   cells:{awareness:{t:"h",l:"High potential",n:"Club and school partnerships offer direct access before fans self-select elsewhere."},first:{t:"h",l:"High potential",n:"Family-unit attendance driven by the child as initial fan. Group packages are a natural vehicle."},repeat:{t:"a",l:"Active opportunity",n:"Season rhythm aligns with youth soccer calendars — built-in re-engagement hooks."},member:{t:"a",l:"Active opportunity",n:"Families with stable DMV roots have a higher membership ceiling than transient segments."},advocacy:{t:"h",l:"High potential",n:"Parents in youth soccer networks are powerful word-of-mouth amplifiers."}},
+   prof:{who:"Families with children actively participating in youth soccer programs across the DMV region.",entry:"Enter at Awareness or First Match via club or school partnership touchpoints — often as a family unit.",lev:"Awareness — intercepting this segment through partnerships before other clubs establish loyalty.",risk:"Children aging out of youth soccer may reduce engagement if adult fan identity isn't cultivated separately.",sig:"Youth soccer club registration data (via partnership agreements) or survey question at ticket purchase: 'Does a member of your household play youth soccer?' Cross-reference zip codes with known club locations as a secondary proxy."}
+  },
+  {name:"USWNT followers (national-to-club)",icon:"ti-star",
+   cells:{awareness:{t:"a",l:"Active opportunity",n:"Already aware of women's soccer; the gap is Spirit-specific awareness and local relevance."},first:{t:"h",l:"High potential",n:"National team fans are pre-sold on the product — the Spirit needs to be a compelling local expression of it."},repeat:{t:"a",l:"Active opportunity",n:"Players with national team connections are natural retention levers for this segment."},member:{t:"a",l:"Active opportunity",n:"Fans with deep USWNT investment are strong membership candidates if the national-to-local bridge is built clearly."},advocacy:{t:"h",l:"High potential",n:"National soccer fan networks are highly engaged online — Spirit visibility in those spaces has outsized reach."}},
+   prof:{who:"Women's soccer fans with strong USWNT affinity who have not yet converted to consistent Spirit attendance.",entry:"Enter at First Match via USWNT event tie-ins, player signings, or national media moments spotlighting Spirit players.",lev:"First Match — pre-existing product affinity means the conversion gap is familiarity and convenience, not interest.",risk:"If Spirit roster lacks current USWNT caps, the bridge to national-team fandom weakens and this segment becomes harder to activate.",sig:"Social media follower overlap (USWNT accounts vs. Spirit accounts) as a reach signal. CRM tag on accounts created around major USWNT events (World Cup, Olympics). Post-match survey: 'Are you a USWNT fan?'"}
+  },
+  {name:"Young professionals",icon:"ti-briefcase",
+   cells:{awareness:{t:"a",l:"Active opportunity",n:"Social media, workplace networks, and city-identity marketing reach this segment effectively."},first:{t:"a",l:"Active opportunity",n:"Group outing context drives first matches — social experience matters more than the sport itself."},repeat:{t:"a",l:"Active opportunity",n:"Frequency is driven by social context. Group offers and post-match programming are the key lever."},member:{t:"f",l:"Friction point",n:"Lifestyle transitions — relocation, relationship changes — create churn risk before membership commitment."},advocacy:{t:"a",l:"Active opportunity",n:"High social media reach and city-identity signaling make this segment natural online advocates."}},
+   prof:{who:"Young professionals (approx. 22–35) building social lives and local identity in the DMV area.",entry:"Enter at First Match through social group contexts, often introduced by a peer.",lev:"Repeat Attendance — social programming and group incentives can build habit before lifestyle transitions disrupt engagement.",risk:"Relocation and life changes are the primary churn vectors before membership is reached.",sig:"Age range from ticket purchase account data. Group ticket orders of 4+ as a proxy for social-context attendance. Zip code clustering around known young professional neighborhoods (Logan Circle, Navy Yard, Arlington)."}
+  },
+  {name:"DC transplants (recently arrived)",icon:"ti-map-pin",
+   cells:{awareness:{t:"a",l:"Active opportunity",n:"Transplants actively forming new social routines — outreach in their first months captures peak openness."},first:{t:"a",l:"Active opportunity",n:"The Spirit can be a cultural entry point and local identity anchor for fans with no prior DMV affiliation."},repeat:{t:"h",l:"High potential",n:"No competing local fan loyalties means retention ceiling is high if the first match experience is strong."},member:{t:"h",l:"High potential",n:"Transplants who embed in DMV have strong membership potential — the Spirit becomes part of local identity."},advocacy:{t:"a",l:"Active opportunity",n:"Connected to national networks of other transplants — potential to spread Spirit brand beyond DMV."}},
+   prof:{who:"Professionals who have relocated to the DMV area, typically within the last 1–2 years, actively building local connections.",entry:"Enter at Awareness or First Match through targeted outreach programs or peer introduction.",lev:"First Match — no competing fan loyalties means a strong first experience has disproportionate long-term impact.",risk:"If outreach misses the early onboarding window, competing entertainment habits form and are harder to displace.",sig:"CRM account creation date vs. billing address history — accounts created within 12 months of a new DMV address are the strongest proxy. Survey at first ticket purchase: 'How long have you lived in the DMV area?' Address change detection via annual re-survey."}
+  },
+  {name:"Relocated fans (formerly DMV)",icon:"ti-plane-departure",
+   cells:{awareness:{t:"u",l:"Underexplored",n:"Already aware — the question is maintaining salience after relocation, not building it."},first:{t:"u",l:"Underexplored",n:"Occasional return visits are possible but not a scalable acquisition model."},repeat:{t:"f",l:"Friction point",n:"Traditional attendance-based engagement breaks down entirely after relocation."},member:{t:"f",l:"Friction point",n:"Standard season ticket structure assumes local attendance — relocated fans churn here without an alternative tier."},advocacy:{t:"h",l:"High potential",n:"Engaged relocated fans may be brand ambassadors in new markets — a largely unstructured channel today."}},
+   prof:{who:"Former DMV residents who developed Spirit fandom before relocating to other markets.",entry:"Already in the fan base — the strategic question is retention and reactivation, not acquisition.",lev:"Advocacy — digitally engaged relocated fans can build Spirit awareness in new markets at near-zero acquisition cost.",risk:"Without a dedicated digital or ambassador tier, churn is near-certain once attendance is no longer practical.",sig:"Address change in CRM billing records — prior DMV zip, current non-DMV zip, with at least one Spirit ticket purchase on record. Email engagement score post-relocation as proxy for retained digital affinity. Lapsed attendance flag: purchased in prior 2 seasons, zero in most recent season."}
+  }
+];
+
+var filtMap={growth:['h'],retention:['f'],digital:['u','a'],all:['h','a','f','u']};
+var curFilt='all';
+var exSegs={};
+
+function renderMatrix(){
+  var tbody=document.getElementById('mbody');
+  var stages=['awareness','first','repeat','member','advocacy'];
+  var allowed=filtMap[curFilt];
+  tbody.innerHTML='';
+  mdata.forEach(function(seg,si){
+    var tr=document.createElement('tr');
+    tr.className='srow'+(exSegs[si]?' ex':'');
+    tr.onclick=function(){togSeg(si);};
+    var html='<td class="stdc"><div class="snin"><i class="ti '+seg.icon+'" style="font-size:14px;color:var(--tx3)"></i>'+seg.name+'<span class="schev">›</span></div></td>';
+    stages.forEach(function(st){
+      var c=seg.cells[st];
+      var cls={h:'ph',a:'pa',f:'pf',u:'pu'}[c.t];
+      var dim=allowed.indexOf(c.t)===-1;
+      html+='<td class="mtd"><span class="cp '+cls+'" style="'+(dim?'opacity:.2':'')+'" data-tip="'+c.n.replace(/"/g,'&quot;')+'">'+c.l+'</span></td>';
+    });
+    tr.innerHTML=html;
+    tbody.appendChild(tr);
+    if(exSegs[si]){
+      var pr=document.createElement('tr');
+      var ptd=document.createElement('td');
+      ptd.colSpan=6;ptd.style.padding='0 0 8px';
+      var p=seg.prof;
+      ptd.innerHTML='<div class="sprof"><div class="pgrid">'
+        +'<div><div class="plbl">Who they are</div><div class="pval">'+p.who+'</div></div>'
+        +'<div><div class="plbl">Journey entry point</div><div class="pval">'+p.entry+'</div></div>'
+        +'<div><div class="plbl">Highest leverage stage</div><div class="pval"><span class="ltag"><i class="ti ti-target" style="font-size:11px"></i>'+p.lev+'</span></div></div>'
+        +'<div><div class="plbl">Retention risk</div><div class="pval">'+p.risk+'</div></div>'
+        +'</div>'
+        +'<div style="margin-top:1rem"><div class="plbl" style="margin-bottom:6px">Data signal — how to identify in CRM or ticketing</div><div class="dsig">'+p.sig+'</div></div>'
+        +'</div>';
+      pr.appendChild(ptd);tbody.appendChild(pr);
+    }
+  });
+  tbody.querySelectorAll('.cp').forEach(function(pill){
+    pill.addEventListener('mouseenter',function(){
+      var tb=document.getElementById('tipbox');
+      tb.textContent=this.getAttribute('data-tip');
+      tb.style.display='block';
+    });
+    pill.addEventListener('mouseleave',function(){
+      document.getElementById('tipbox').style.display='none';
+    });
+  });
+}
+function togSeg(i){if(exSegs[i])delete exSegs[i];else exSegs[i]=true;renderMatrix();}
+function setFilt(f,btn){curFilt=f;document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');renderMatrix();}
+renderMatrix();
+
+var scenarios=[
+  {
+    num:"01",seqCls:"seq-1",seqLbl:"Build first",
+    seqRat:"Time-sensitive acquisition window plus CRM infrastructure that unlocks Scenarios 02 and 03.",
+    title:"Transplant onboarding",
+    q:"If structured outreach improves transplant conversion, how does fan base composition shift?",
+    outDef:"Estimated cumulative net new fans retained over 5 years — not revenue or total attendance events.",
+    sliders:[
+      {id:'s1a',label:"Transplants reached by outreach annually",min:500,max:5000,val:1200,step:1,fmt:function(v){return Math.round(v).toLocaleString();}},
+      {id:'s1b',label:"Outreach → first match conversion",min:5,max:35,val:15,step:1,fmt:function(v){return Math.round(v)+'%';}},
+      {id:'s1c',label:"Transplant → member conversion",min:4,max:25,val:10,step:1,fmt:function(v){return Math.round(v)+'%';}}
+    ],
+    compute:function(vals){
+      var reach=vals[0],fc=vals[1],mc=vals[2];
+      var ft=Math.round(reach*(fc/100));
+      var repeat=Math.round(ft*0.38);
+      var members=Math.round(ft*(mc/100));
+      var five=Math.round(members*5+repeat*0.5);
+      var insight;
+      if(fc>=25) insight="At 25%+ outreach conversion, transplants become the highest-volume new fan acquisition channel in the Spirit's portfolio — surpassing organic discovery. Proactive outreach, not passive marketing, becomes the primary growth engine.";
+      else if(mc>=15) insight="The membership conversion rate here exceeds the repeat conversion rate — transplants who attend once are converting to members at an above-average clip. That argues for investing more in the first-match experience specifically for this segment.";
+      else insight="At current assumptions, roughly 1 in 7 transplants reached becomes a repeat attendee. The DMV receives an estimated 150,000+ new residents annually — even a 1% capture rate represents a meaningful pipeline. Scale of reach is the lever that matters most here.";
+      return{l1:"New first-timers generated / year",v1:ft,l2:"New members / year",v2:members,five:five,insight:insight};
+    },
+    analyst:"Requires a transplant signal in CRM — account creation date cross-referenced with billing address, or a survey question at first ticket purchase. This tagging infrastructure, once built, also enables acquisition source analysis for Scenario 02 and lapsed-fan detection for Scenario 03. Build this first and the other two scenarios become faster and cheaper to execute."
+  },
+  {
+    num:"02",seqCls:"seq-2",seqLbl:"Build second",
+    seqRat:"Valuable, but requires the CRM infrastructure that Scenario 01 builds first.",
+    title:"Youth soccer pipeline",
+    q:"If partnerships generate more first-timers, what's the downstream effect on membership?",
+    outDef:"Estimated cumulative net new fans retained over 5 years — not revenue or total attendance events.",
+    sliders:[
+      {id:'s2a',label:"First-time attendees from youth partnerships",min:200,max:2000,val:500,step:1,fmt:function(v){return Math.round(v).toLocaleString();}},
+      {id:'s2b',label:"First-timer → repeat conversion rate",min:15,max:60,val:30,step:1,fmt:function(v){return Math.round(v)+'%';}},
+      {id:'s2c',label:"Repeat → membership conversion rate",min:3,max:20,val:8,step:1,fmt:function(v){return Math.round(v)+'%';}}
+    ],
+    compute:function(vals){
+      var ft=vals[0],rc=vals[1],mc=vals[2];
+      var repeat=Math.round(ft*(rc/100));
+      var members=Math.round(repeat*(mc/100));
+      var five=Math.round(members*4.5+repeat*0.6);
+      var insight;
+      if(rc>=40) insight="At 40%+ first-timer conversion, youth households outperform every other segment in this matrix. That threshold is achievable if the first-match experience is actively designed for families — not just tolerated.";
+      else if(rc>=25) insight="At this conversion rate, youth partnership investment breaks even on fan development ROI within roughly 3 seasons. The question is whether the Spirit has the community infrastructure to reach 500+ youth households per year.";
+      else insight="Below 25% conversion, partnership volume is the constraint — not experience quality. A 10-point conversion improvement has 3x the impact of doubling outreach. The model is more sensitive to retention than reach.";
+      return{l1:"New repeat attendees / year",v1:repeat,l2:"New members / year",v2:members,five:five,insight:insight};
+    },
+    analyst:"Requires acquisition source tagging in the ticketing system linked to attendance history. A 90-day return cohort by acquisition source validates whether youth soccer households convert at different rates than organic first-timers. This tagging is built as a byproduct of the Scenario 01 transplant infrastructure."
+  },
+  {
+    num:"03",seqCls:"seq-3",seqLbl:"Build third",
+    seqRat:"Highest strategic upside, but lowest data readiness — requires address-change infrastructure first.",
+    title:"Relocated fan engagement",
+    q:"If relocated fans stay digitally engaged, what's the advocacy and referral impact?",
+    outDef:"Estimated cumulative net new fans added via relocated-fan referrals over 5 years — not revenue or total attendance events.",
+    sliders:[
+      {id:'s3a',label:"% of relocated fans retained digitally",min:10,max:60,val:25,step:1,fmt:function(v){return Math.round(v)+'%';}},
+      {id:'s3b',label:"Referrals per engaged fan / year",min:1,max:40,val:12,step:1,fmt:function(v){return (Math.round(v)/10).toFixed(1);}},
+      {id:'s3c',label:"Referral → first match conversion",min:10,max:40,val:20,step:1,fmt:function(v){return Math.round(v)+'%';}}
+    ],
+    compute:function(vals){
+      var ret=vals[0],ref=vals[1],conv=vals[2];
+      var base=800;
+      var engaged=Math.round(base*(ret/100));
+      var referrals=Math.round(engaged*(ref/10));
+      var newFans=Math.round(referrals*(conv/100));
+      var five=Math.round(newFans*3.5);
+      var insight;
+      if(ret>=40) insight="At 40%+ digital retention, this becomes the most cost-efficient fan acquisition channel in the model — referral cost per new fan is near zero. The real constraint is whether the Spirit has a digital product worth staying connected to after relocation.";
+      else if(newFans>=80) insight="Even at modest assumptions, this scenario generates a self-funding acquisition loop: retained fans refer new fans who may eventually relocate and refer again. The compounding effect over 5+ years is understated in this model.";
+      else insight="This scenario produces the smallest near-term number of the three — but it's the only one that scales nationally without proportional cost increase. One engaged relocated fan in Chicago reaches a social network the Spirit couldn't otherwise access. That's a distribution channel, not just a retention play.";
+      return{l1:"Digitally retained fans",v1:engaged,l2:"New first-timers via referral / year",v2:newFans,five:five,insight:insight};
+    },
+    analyst:"Requires address-change detection via annual re-survey or billing address monitoring, plus a lapsed attendance flag (purchased in prior 2 seasons, zero in most recent). Digital engagement scoring — email open rate, app activity, social follows — serves as the retained status proxy. This infrastructure depends on the CRM foundation built in Scenario 01."
+  }
+];
+
+var curSc=0;
+var slVals=scenarios.map(function(s){return s.sliders.map(function(sl){return sl.val;});});
+
+function renderScCards(){
+  var html='';
+  scenarios.forEach(function(sc,i){
+    html+='<div class="scc'+(i===curSc?' on':'')+'" onclick="selSc('+i+')">'
+      +'<div><span class="seq-badge '+sc.seqCls+'"><i class="ti ti-arrow-right" style="font-size:9px"></i>'+sc.seqLbl+'</span></div>'
+      +'<div class="scnum">Scenario '+sc.num+'</div>'
+      +'<div class="sctitle">'+sc.title+'</div>'
+      +'<div class="scq">'+sc.q+'</div>'
+      +'<div class="seq-rat">'+sc.seqRat+'</div>'
+      +'</div>';
+  });
+  html+='<div class="scc fut">'
+    +'<div class="scnum">Scenario 04</div>'
+    +'<div class="sctitle">Dynamic pricing effects</div>'
+    +'<div class="scq">How does variable pricing on lower-demand matches affect first-timer conversion rates?</div>'
+    +'<div><span class="fut-badge">Under development</span></div>'
+    +'</div>';
+  document.getElementById('scards').innerHTML=html;
+}
+
+function selSc(i){
+  curSc=i;
+  renderScCards();
+  renderSc();
+}
+
+function renderSc(){
+  var sc=scenarios[curSc];
+  var vals=slVals[curSc];
+  var sh='<div class="stitle">Assumptions</div>';
+  sc.sliders.forEach(function(sl,i){
+    sh+='<div class="slrow"><div class="sllr"><span class="slname">'+sl.label+'</span><span class="slval" id="sv-'+sl.id+'">'+sc.sliders[i].fmt(vals[i])+'</span></div><input type="range" min="'+sl.min+'" max="'+sl.max+'" step="'+(sl.step||1)+'" value="'+vals[i]+'" oninput="updSl('+curSc+','+i+',this.value)"></div>';
+  });
+  document.getElementById('spanel').innerHTML=sh;
+  renderOutputs();
+}
+
+function renderOutputs(){
+  var sc=scenarios[curSc];
+  var out=sc.compute(slVals[curSc]);
+  document.getElementById('opanel').innerHTML=
+    '<div class="ocard"><div class="olbl">'+out.l1+'</div><div class="oval">'+out.v1.toLocaleString()+'</div><div class="onote">Illustrative</div></div>'
+    +'<div class="ocard"><div class="olbl">'+out.l2+'</div><div class="oval">'+out.v2.toLocaleString()+'</div><div class="onote">Illustrative</div></div>'
+    +'<div class="ocard"><div class="olbl">5-year fan base contribution</div><div class="oval">'+out.five.toLocaleString()+'</div><div class="onote">Illustrative</div><div class="odef">'+sc.outDef+'</div></div>'
+    +'<div class="icard"><div class="ilbl">Directional insight</div><div class="itxt">'+out.insight+'</div></div>';
+  document.getElementById('anote').innerHTML='<div class="albl">Analyst\'s note — what data would make this real</div><div class="atxt">'+sc.analyst+'</div>';
+}
+
+function updSl(scIdx,slIdx,val){
+  var sc=scenarios[scIdx];
+  slVals[scIdx][slIdx]=parseFloat(val);
+  var el=document.getElementById('sv-'+sc.sliders[slIdx].id);
+  if(el) el.textContent=sc.sliders[slIdx].fmt(val);
+  renderOutputs();
+}
+
+renderScCards();
+selSc(0);
+</script>
+</body>
+</html>
